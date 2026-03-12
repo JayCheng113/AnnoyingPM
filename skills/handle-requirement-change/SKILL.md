@@ -25,6 +25,8 @@ NO CLAIMING DONE WITHOUT VERIFYING PRESERVED BEHAVIORS.
 
 **Default UP, not down.** If unsure between SMALL and MEDIUM → choose MEDIUM.
 
+**LARGE changes: decompose first.** If a change touches 10+ files or spans multiple modules, break it into sequential smaller changes. Each sub-change goes through the full cycle independently. Don't try to scope a React-to-Vue migration as one change.
+
 **AI/ML rule:** Non-deterministic components (prompts, rewards, model configs) = automatically MEDIUM+.
 
 ## Step 1: CLASSIFY
@@ -34,6 +36,13 @@ NO CLAIMING DONE WITHOUT VERIFYING PRESERVED BEHAVIORS.
 | **ADDITIVE** | "Add X" — nothing equivalent exists | Integration conflicts |
 | **MODIFYING** | "Change how X works" — behavior changes | Breaking dependents |
 | **REPLACING** | "Rewrite X" / "Switch A to B" | Losing implicit behaviors |
+| **OPTIMIZING** | "Make X faster/cleaner" — behavior unchanged, implementation changes | Subtle behavior drift |
+
+**Edge cases:**
+- Performance optimization → OPTIMIZING (survey to confirm behavior truly stays identical)
+- Partial addition (feature partially exists) → MODIFYING (you're extending existing behavior)
+- Rollback/revert → use `git revert` first, then VERIFY preserved behaviors
+- Decomposable migration → break into multiple changes, each goes through full cycle
 
 Capture: **WHY** this change is being made. Business context drives scope decisions.
 
@@ -45,7 +54,7 @@ No implementation until survey is done.
 
 **ALL changes (SMALL+):**
 1. Grep/Glob for ALL files referencing affected code — do NOT rely on memory
-2. Identify tests covering the affected area
+2. Identify tests covering the affected area (if NO tests exist: note the gap, consider writing key tests as part of this change)
 3. Check for conflicts with existing requirements
 
 **Add for MODIFYING/REPLACING:**
@@ -81,7 +90,7 @@ BEFORE writing any code, answer these explicitly. If ANY answer is NO → STOP.
 1. Can I list ALL affected files? → if no: Step 2 incomplete
 2. Can I describe current behavior of code I'm changing? → if no: Step 2 incomplete
 3. Do I have a DO NOT TOUCH list? → if no: Step 3 incomplete
-4. Do I have Non-Goals defined? → if no: Step 3 incomplete
+4. (MEDIUM+ only) Do I have Non-Goals defined? → if no: Step 3 incomplete
 5. Am I about to change something "because I'm already here"? → if yes: scope creep, re-scope
 
 ## Step 4: IMPLEMENT
@@ -104,11 +113,11 @@ BEFORE writing any code, answer these explicitly. If ANY answer is NO → STOP.
 Do NOT claim done until verified.
 </HARD-GATE>
 
-1. Full test suite passes (not just changed tests)
+1. Full test suite passes (not just changed tests). No tests? Verify manually and flag the gap to the user.
 2. All Step 3 scope items addressed
 3. All DO NOT TOUCH items actually untouched
 4. All Non-Goals confirmed not accidentally addressed (scope stayed focused)
-5. MODIFYING/REPLACING: each preserved behavior verified
+5. MODIFYING/REPLACING/OPTIMIZING: each preserved behavior verified
 6. Docs/specs updated
 
 ## Step 6: LEARN (MEDIUM+ changes)
@@ -127,8 +136,11 @@ LARGE: write as a note with the commit. MEDIUM: flag surprises to the user verba
 When requirements change DURING implementation:
 
 1. **STOP** — do not adapt on the fly
-2. **Classify the pivot:** new change (finish current first) or modification to current change (re-survey)
-3. **Check conflicts** between what you've built and the new direction
+2. **Classify the pivot:**
+   - **Tweak** ("also add field X") → re-scope (Step 3), add to task list
+   - **Switch direction** ("use Memcached instead of Redis") → discard current scope, go back to Step 2 with new requirement
+   - **New independent feature** ("also build Y") → finish current change first, then start Y from Step 0
+3. **Check conflicts** between what you've already built and the new direction
 4. **Re-scope** (Step 3) — do NOT just tack onto existing scope
 5. **Resume** from re-scoped task list
 
