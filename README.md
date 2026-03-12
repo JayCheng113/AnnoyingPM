@@ -51,23 +51,43 @@ SIZE → CLASSIFY → SURVEY → SCOPE → IMPLEMENT → VERIFY → LEARN
 
 The skill follows the [Agent Skills](https://agentskills.io) open standard and works across multiple tools.
 
-### Claude Code
+### Quick Install
 
 ```bash
-# Project-level (recommended)
-cp -r skills/handle-requirement-change/ your-project/.claude/skills/handle-requirement-change/
+# Claude Code (project-level)
+git clone https://github.com/JayCheng113/AnnoyingPM.git /tmp/AnnoyingPM && \
+  mkdir -p .claude/skills && \
+  cp -r /tmp/AnnoyingPM/skills/handle-requirement-change .claude/skills/ && \
+  rm -rf /tmp/AnnoyingPM
 
-# Global (all projects)
-cp -r skills/handle-requirement-change/ ~/.claude/skills/handle-requirement-change/
+# Claude Code (global)
+git clone https://github.com/JayCheng113/AnnoyingPM.git /tmp/AnnoyingPM && \
+  mkdir -p ~/.claude/skills && \
+  cp -r /tmp/AnnoyingPM/skills/handle-requirement-change ~/.claude/skills/ && \
+  rm -rf /tmp/AnnoyingPM
+
+# Codex CLI (project-level)
+git clone https://github.com/JayCheng113/AnnoyingPM.git /tmp/AnnoyingPM && \
+  mkdir -p .agents/skills && \
+  cp -r /tmp/AnnoyingPM/skills/handle-requirement-change .agents/skills/ && \
+  rm -rf /tmp/AnnoyingPM
 ```
 
-### Codex CLI
+### Manual Install
+
+If you've already cloned the repo:
 
 ```bash
-# Project-level (recommended)
+# Claude Code (project-level, recommended)
+cp -r skills/handle-requirement-change/ your-project/.claude/skills/handle-requirement-change/
+
+# Claude Code (global)
+cp -r skills/handle-requirement-change/ ~/.claude/skills/handle-requirement-change/
+
+# Codex CLI (project-level)
 cp -r skills/handle-requirement-change/ your-project/.agents/skills/handle-requirement-change/
 
-# Global (all projects)
+# Codex CLI (global)
 cp -r skills/handle-requirement-change/ ~/.agents/skills/handle-requirement-change/
 ```
 

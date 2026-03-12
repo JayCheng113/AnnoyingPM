@@ -51,23 +51,43 @@ SIZE → CLASSIFY → SURVEY → SCOPE → IMPLEMENT → VERIFY → LEARN
 
 本技能遵循 [Agent Skills](https://agentskills.io) 开放标准，支持多种工具。
 
-### Claude Code
+### 一键安装
 
 ```bash
-# 项目级别（推荐）
-cp -r skills/handle-requirement-change/ your-project/.claude/skills/handle-requirement-change/
+# Claude Code（项目级别）
+git clone https://github.com/JayCheng113/AnnoyingPM.git /tmp/AnnoyingPM && \
+  mkdir -p .claude/skills && \
+  cp -r /tmp/AnnoyingPM/skills/handle-requirement-change .claude/skills/ && \
+  rm -rf /tmp/AnnoyingPM
 
-# 全局（所有项目生效）
-cp -r skills/handle-requirement-change/ ~/.claude/skills/handle-requirement-change/
+# Claude Code（全局）
+git clone https://github.com/JayCheng113/AnnoyingPM.git /tmp/AnnoyingPM && \
+  mkdir -p ~/.claude/skills && \
+  cp -r /tmp/AnnoyingPM/skills/handle-requirement-change ~/.claude/skills/ && \
+  rm -rf /tmp/AnnoyingPM
+
+# Codex CLI（项目级别）
+git clone https://github.com/JayCheng113/AnnoyingPM.git /tmp/AnnoyingPM && \
+  mkdir -p .agents/skills && \
+  cp -r /tmp/AnnoyingPM/skills/handle-requirement-change .agents/skills/ && \
+  rm -rf /tmp/AnnoyingPM
 ```
 
-### Codex CLI
+### 手动安装
+
+如果已经克隆了仓库：
 
 ```bash
-# 项目级别（推荐）
+# Claude Code（项目级别，推荐）
+cp -r skills/handle-requirement-change/ your-project/.claude/skills/handle-requirement-change/
+
+# Claude Code（全局）
+cp -r skills/handle-requirement-change/ ~/.claude/skills/handle-requirement-change/
+
+# Codex CLI（项目级别）
 cp -r skills/handle-requirement-change/ your-project/.agents/skills/handle-requirement-change/
 
-# 全局（所有项目生效）
+# Codex CLI（全局）
 cp -r skills/handle-requirement-change/ ~/.agents/skills/handle-requirement-change/
 ```
 
