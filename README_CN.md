@@ -4,7 +4,7 @@
 
 > 你的 PM 又改需求了？让 AI agent 也能优雅地应对。
 
-一个 Claude Code skill，让 AI 编码 agent 系统化地处理需求变更——覆盖传统软件开发、LLM 应用、强化学习、ML 训练管线和 AI agent 开发。
+一个遵循 [Agent Skills](https://agentskills.io) 开放标准的技能，让 AI 编码 agent 系统化地处理需求变更——覆盖传统软件开发、LLM 应用、强化学习、ML 训练管线和 AI agent 开发。兼容 **Claude Code**、**Codex CLI** 及所有支持 Agent Skills 标准的工具。
 
 ## 为什么需要这个
 
@@ -49,17 +49,49 @@ SIZE → CLASSIFY → SURVEY → SCOPE → IMPLEMENT → VERIFY → LEARN
 
 ## 安装
 
-### 项目级别（推荐）
+本技能遵循 [Agent Skills](https://agentskills.io) 开放标准，支持多种工具。
+
+### Claude Code
 
 ```bash
+# 项目级别（推荐）
 cp -r skills/handle-requirement-change/ your-project/.claude/skills/handle-requirement-change/
-```
 
-### 全局（所有项目生效）
-
-```bash
+# 全局（所有项目生效）
 cp -r skills/handle-requirement-change/ ~/.claude/skills/handle-requirement-change/
 ```
+
+### Codex CLI
+
+```bash
+# 项目级别（推荐）
+cp -r skills/handle-requirement-change/ your-project/.agents/skills/handle-requirement-change/
+
+# 全局（所有项目生效）
+cp -r skills/handle-requirement-change/ ~/.agents/skills/handle-requirement-change/
+```
+
+### 同一项目同时支持两个工具
+
+```bash
+# 安装到 Claude Code
+cp -r skills/handle-requirement-change/ your-project/.claude/skills/handle-requirement-change/
+
+# 为 Codex CLI 创建符号链接（避免重复）
+mkdir -p your-project/.agents/skills
+ln -s ../../.claude/skills/handle-requirement-change your-project/.agents/skills/handle-requirement-change
+```
+
+### 兼容性
+
+本技能使用标准 SKILL.md 格式（含 YAML frontmatter）。工具特有的 frontmatter 字段会被不支持的工具自动忽略。
+
+| 工具 | 技能路径 | 触发方式 |
+|------|---------|---------|
+| Claude Code | `.claude/skills/` | `/handle-requirement-change` 或自动检测 |
+| Codex CLI | `.agents/skills/` | 需求变更时自动检测 |
+| VS Code Copilot | `.agents/skills/` | 自动检测 |
+| Cursor | `.cursor/skills/` 或 `.agents/skills/` | 自动检测 |
 
 ## 使用
 
@@ -137,6 +169,7 @@ skills/handle-requirement-change/
 | v2 | 实用化：复杂度分级、SKILL.md 468→174行、Mid-stream Pivots |
 | v3 | 社区最佳实践：强制自检、Non-Goals、LEARN步骤、Failed Attempts |
 | v4 | 场景审查：OPTIMIZING类型、无测试处理、LARGE分解、pivot细分 |
+| v5 | 跨工具兼容：Agent Skills 标准、支持 Claude Code + Codex CLI + Cursor |
 
 ## License
 

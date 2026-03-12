@@ -4,7 +4,7 @@
 
 > Your PM changed the requirements again? Let your AI agent handle it gracefully.
 
-A Claude Code skill that helps AI coding agents systematically handle requirement changes — covering traditional software development, LLM apps, reinforcement learning, ML pipelines, and AI agent development.
+An [Agent Skill](https://agentskills.io) for AI coding agents to systematically handle requirement changes — covering traditional software development, LLM apps, reinforcement learning, ML pipelines, and AI agent development. Compatible with **Claude Code**, **Codex CLI**, and any tool supporting the Agent Skills standard.
 
 ## Why This Exists
 
@@ -49,17 +49,49 @@ SIZE → CLASSIFY → SURVEY → SCOPE → IMPLEMENT → VERIFY → LEARN
 
 ## Installation
 
-### Project-level (recommended)
+The skill follows the [Agent Skills](https://agentskills.io) open standard and works across multiple tools.
+
+### Claude Code
 
 ```bash
+# Project-level (recommended)
 cp -r skills/handle-requirement-change/ your-project/.claude/skills/handle-requirement-change/
-```
 
-### Global (all projects)
-
-```bash
+# Global (all projects)
 cp -r skills/handle-requirement-change/ ~/.claude/skills/handle-requirement-change/
 ```
+
+### Codex CLI
+
+```bash
+# Project-level (recommended)
+cp -r skills/handle-requirement-change/ your-project/.agents/skills/handle-requirement-change/
+
+# Global (all projects)
+cp -r skills/handle-requirement-change/ ~/.agents/skills/handle-requirement-change/
+```
+
+### Both tools in the same project
+
+```bash
+# Install for Claude Code
+cp -r skills/handle-requirement-change/ your-project/.claude/skills/handle-requirement-change/
+
+# Symlink for Codex CLI (avoids duplication)
+mkdir -p your-project/.agents/skills
+ln -s ../../.claude/skills/handle-requirement-change your-project/.agents/skills/handle-requirement-change
+```
+
+### Compatibility
+
+This skill uses the standard SKILL.md format with YAML frontmatter. Tool-specific frontmatter fields are ignored by tools that don't support them.
+
+| Tool | Skill Path | Invocation |
+|------|-----------|------------|
+| Claude Code | `.claude/skills/` | `/handle-requirement-change` or auto-detect |
+| Codex CLI | `.agents/skills/` | Auto-detect on requirement changes |
+| VS Code Copilot | `.agents/skills/` | Auto-detect |
+| Cursor | `.cursor/skills/` or `.agents/skills/` | Auto-detect |
 
 ## Usage
 
@@ -137,6 +169,7 @@ For detailed design documentation, see `docs/design.md`.
 | v2 | Practical: complexity scaling, SKILL.md 468→174 lines, mid-stream pivots |
 | v3 | Community best practices: forced self-check, Non-Goals, LEARN step, Failed Attempts |
 | v4 | Scenario review: OPTIMIZING type, no-test handling, LARGE decomposition, pivot refinement |
+| v5 | Cross-tool compatibility: Agent Skills standard, Claude Code + Codex CLI + Cursor support |
 
 ## License
 
