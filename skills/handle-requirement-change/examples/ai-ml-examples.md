@@ -14,12 +14,12 @@ You are a helpful assistant. Answer questions based on the provided context. If 
 **Current output:** Free-form text paragraphs.
 **Desired output:** Concise answer + structured JSON citations.
 
-### Phase 1: CLASSIFY
+### Step 1: CLASSIFY
 - **Type:** MODIFYING (changing existing LLM behavior)
 - **Risk:** HIGH — output format change breaks all consumers; non-deterministic component
 - **Business context:** Users want quicker answers with verifiable sources
 
-### Phase 2: SURVEY
+### Step 2: SURVEY
 
 **Investigation:**
 ```bash
@@ -51,7 +51,7 @@ Glob: **/*prompt*
 - Evaluation score: 0.82 accuracy on 50 test cases
 - No structured citations (just inline "according to...")
 
-### Phase 3: SCOPE
+### Step 3: SCOPE
 
 **Tasks:**
 1. Update `src/prompts/system.txt` — add citation format instructions — S
@@ -59,6 +59,11 @@ Glob: **/*prompt*
 3. Update `frontend/src/components/Answer.tsx` — render citation blocks — M
 4. Update `eval/test_cases.json` — adjust expected format — M
 5. Run evaluation — compare accuracy and format compliance — S
+
+**Non-Goals:**
+- NOT changing the RAG retrieval pipeline
+- NOT upgrading the embedding model
+- NOT adding multi-language support
 
 **Behaviors to preserve:**
 - "I don't know" responses when context lacks answer
@@ -70,7 +75,7 @@ Glob: **/*prompt*
 - User prompt template
 - Authentication/rate limiting
 
-### Phase 4: IMPLEMENT
+### Step 4: IMPLEMENT
 
 **Key rule: update parsers BEFORE changing prompt.**
 1. First: make parser handle BOTH old and new format (backwards compatible)
@@ -79,7 +84,7 @@ Glob: **/*prompt*
 4. Then: update frontend rendering
 5. Then: update evaluation test cases
 
-### Phase 5: VERIFY
+### Step 5: VERIFY
 - [x] Evaluation: accuracy ≥ 0.80 (baseline 0.82) — within acceptable range
 - [x] Citation format compliance: 95%+ responses include structured citations
 - [x] "I don't know" behavior preserved
@@ -87,6 +92,11 @@ Glob: **/*prompt*
 - [x] 50 test cases pass with updated expected format
 - [x] Response length reduced: avg 80-100 words (from 150-200)
 - [x] RAG pipeline untouched (retrieval metrics identical)
+
+### LEARN
+- **Surprise:** analytics `usage_tracker.py` also consumed response length — metrics dashboard showed anomaly after change.
+- **Failed attempt:** changed prompt before updating parser, broke 3 API calls before catching it.
+- **Would-do-differently:** always update parsers BEFORE changing prompts.
 
 ---
 
@@ -96,11 +106,11 @@ Glob: **/*prompt*
 
 An RL agent navigates a warehouse. Current reward: sparse (only on task completion). Research lead says: "Switch to a dense reward with potential-based shaping. The agent takes too long to learn."
 
-### Phase 1: CLASSIFY
+### Step 1: CLASSIFY
 - **Type:** REPLACING (replacing reward function entirely)
 - **Risk:** HIGHEST — reward changes can cause policy collapse or reward hacking
 
-### Phase 2: SURVEY
+### Step 2: SURVEY
 
 **Old reward inventory:**
 ```python
@@ -126,7 +136,7 @@ def reward(state, action, next_state):
 - Average episode length: 120 steps
 - Collision rate: 5%
 
-### Phase 3: SCOPE
+### Step 3: SCOPE
 
 **Tasks:**
 1. Implement potential function Φ(s) based on distance-to-goal — M
@@ -134,6 +144,11 @@ def reward(state, action, next_state):
 3. Add reward component logging (sparse vs shaping terms) — S
 4. Run short sanity training (100K steps) — compare with baseline learning curve — M
 5. Run full training — compare with baseline — L
+
+**Non-Goals:**
+- NOT changing the policy architecture
+- NOT modifying the environment dynamics
+- NOT tuning hyperparameters beyond reward function
 
 **Behaviors to preserve:**
 - Collision avoidance
@@ -146,7 +161,7 @@ def reward(state, action, next_state):
 - Action space
 - Policy network architecture
 
-### Phase 4: IMPLEMENT
+### Step 4: IMPLEMENT
 
 **Key rule: checkpoint current policy BEFORE any reward changes.**
 1. Save current best policy as rollback target
@@ -156,13 +171,17 @@ def reward(state, action, next_state):
 5. Full training only after sanity check passes
 6. Watch for: proxy reward ↑ but success rate ↓ (reward hacking signal!)
 
-### Phase 5: VERIFY
+### Step 5: VERIFY
 - [x] Convergence faster: 800K steps (from 2M) — 2.5x improvement
 - [x] Success rate: 75% (from 60%) — improved
 - [x] No reward hacking: true objective tracks proxy reward
 - [x] Collision rate: 4% (from 5%) — preserved/improved
 - [x] Average episode length: 80 steps (from 120) — improved
 - [x] Old sparse reward still logged for comparison
+
+### LEARN
+- **Surprise:** step penalty (-0.1) interacted with distance shaping in unexpected ways — agent briefly learned to hover near goal without reaching it.
+- **Would-do-differently:** analyze interaction between existing reward terms and new shaping before training.
 
 ---
 
@@ -172,11 +191,11 @@ def reward(state, action, next_state):
 
 Research project has PPO baseline for continuous control. Lead says: "Implement SAC as a new baseline for comparison."
 
-### Phase 1: CLASSIFY
+### Step 1: CLASSIFY
 - **Type:** ADDITIVE (new algorithm alongside existing)
 - **Risk:** Medium — new code, but must integrate with existing evaluation infrastructure
 
-### Phase 2: SURVEY
+### Step 2: SURVEY
 
 **Investigation:**
 ```bash
@@ -212,7 +231,7 @@ Glob: configs/**
 - Final return: ~6000 (1M steps)
 - Training time: ~2 hours
 
-### Phase 3: SCOPE
+### Step 3: SCOPE
 
 **Tasks:**
 1. Create `src/algorithms/sac/` following PPO structure — M
@@ -223,6 +242,11 @@ Glob: configs/**
 6. Run HalfCheetah: verify reproduction of published SAC results — M
 7. Add to evaluation comparison scripts — S
 
+**Non-Goals:**
+- NOT modifying PPO implementation
+- NOT adding new environments
+- NOT tuning SAC beyond reproducing published results
+
 **DO NOT TOUCH:**
 - PPO implementation (don't modify existing algorithm)
 - Evaluation pipeline (SAC should work with existing evaluator)
@@ -230,20 +254,24 @@ Glob: configs/**
 
 **Key principle: reproduce published numbers BEFORE any modifications.**
 
-### Phase 4: IMPLEMENT
+### Step 4: IMPLEMENT
 
 1. Follow PPO's file structure exactly (pattern matching)
 2. Use shared `networks.py` builders — extend if needed, don't modify existing
 3. After implementing: run HalfCheetah, compare with published SAC results
 4. Only proceed to comparisons after baseline reproduction verified
 
-### Phase 5: VERIFY
+### Step 5: VERIFY
 - [x] SAC reproduces published results on HalfCheetah (~8000 return at 1M steps)
 - [x] SAC works with existing evaluator (no changes needed)
 - [x] SAC configs follow same format as PPO configs
 - [x] PPO results unchanged (no regression from adding SAC)
 - [x] wandb logging works for SAC
 - [x] Comparison scripts include both algorithms
+
+### LEARN
+- **Surprise:** published SAC paper used different network sizes than our PPO — had to add larger network configs to shared builders.
+- **Would-do-differently:** check if shared infrastructure needs extension before estimating scope.
 
 ---
 
@@ -253,11 +281,11 @@ Glob: configs/**
 
 An ML fraud detection model uses manual features. Data scientist says: "Add transaction velocity features (transactions per hour) and change the time window from 24h to 72h."
 
-### Phase 1: CLASSIFY
+### Step 1: CLASSIFY
 - **Type:** MODIFYING (changing existing feature pipeline)
 - **Risk:** HIGH — feature changes affect model AND serving pipeline
 
-### Phase 2: SURVEY
+### Step 2: SURVEY
 
 **Critical discovery:**
 ```bash
@@ -284,7 +312,7 @@ Grep: "feature_columns\|input_dim" in src/model/**
 
 **Train-serve skew risk:** Feature store computes offline (training), predict.py computes online (serving). Both MUST use identical logic.
 
-### Phase 3: SCOPE
+### Step 3: SCOPE
 
 **Tasks:**
 1. Add velocity features to `src/features/transaction_features.py` — M
@@ -295,6 +323,11 @@ Grep: "feature_columns\|input_dim" in src/model/**
 6. Retrain model with new features — L
 7. Compare metrics: new model vs baseline — M
 
+**Non-Goals:**
+- NOT retraining with new architecture
+- NOT changing the serving infrastructure
+- NOT adding real-time feature computation
+
 **Behaviors to preserve:**
 - All existing 45 features compute identically
 - Feature store caching works correctly
@@ -303,7 +336,7 @@ Grep: "feature_columns\|input_dim" in src/model/**
 **CRITICAL: train-serve consistency**
 - Feature computation in `transaction_features.py` and `predict.py` MUST be identical
 
-### Phase 5: VERIFY
+### Step 5: VERIFY
 - [x] Existing 45 features produce identical values (regression test)
 - [x] 3 new velocity features compute correctly (unit tests)
 - [x] Time window correctly set to 72h in both training and serving
@@ -312,3 +345,8 @@ Grep: "feature_columns\|input_dim" in src/model/**
 - [x] Model performance: AUC 0.94 (from 0.91) — improved
 - [x] Serving latency: 85ms (from 70ms) — within SLA
 - [x] No data leakage from velocity features
+
+### LEARN
+- **Surprise:** feature store cache key included time window — changing from 24h to 72h invalidated all cached features.
+- **Failed attempt:** forgot to update serving pipeline, caught by train-serve consistency test.
+- **Would-do-differently:** always run train-serve skew test as first verification step.

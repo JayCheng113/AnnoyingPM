@@ -24,6 +24,14 @@ The `handle-requirement-change` skill enforces a 5-phase process:
 
 Each phase has a hard gate — you can't skip ahead.
 
+## Philosophy
+
+Three design principles guide AnnoyingPM:
+
+1. **Scale to size** — Trivial changes skip process entirely. Small changes use mental walkthroughs. Only large changes need formal documents.
+2. **Learn from failures** — Every medium+ change captures surprises and failed attempts. Failures compound into team knowledge (inspired by Sionic AI's /retrospective pattern).
+3. **Non-goals prevent creep** — Every scope explicitly defines what the change does NOT address. This is more powerful than "DO NOT TOUCH" lists because it operates at the intent level.
+
 ## Installation
 
 ### Per-project (recommended)
@@ -57,10 +65,8 @@ Or invoke it explicitly with `/handle-requirement-change`.
 ```
 skills/handle-requirement-change/
 ├── SKILL.md           # Core skill definition
-├── templates/         # Output format templates for each phase
-│   ├── change-request.md
-│   ├── impact-report.md
-│   └── scope-document.md
+├── templates/         # Output format templates
+│   └── change-checklist.md    # Single unified checklist (replaces old change-request/impact-report/scope-document)
 └── examples/          # Complete walkthroughs
     ├── additive-example.md     # Software: adding auth
     ├── modifying-example.md    # Software: changing API format

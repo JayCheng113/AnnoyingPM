@@ -6,7 +6,7 @@ A todo app has basic CRUD operations. The PM requests: "We need user authenticat
 
 ---
 
-## Phase 1: CLASSIFY
+## Step 1: CLASSIFY
 
 **Change Type:** ADDITIVE
 **User's words:** "We need user authentication — users should log in before accessing their todos."
@@ -16,7 +16,7 @@ A todo app has basic CRUD operations. The PM requests: "We need user authenticat
 
 ---
 
-## Phase 2: SURVEY
+## Step 2: SURVEY
 
 **Investigation:**
 
@@ -49,7 +49,7 @@ Glob: **/*.test.{js,ts}
 
 ---
 
-## Phase 3: SCOPE
+## Step 3: SCOPE
 
 **Tasks (ordered):**
 1. Add user migration (`migrations/002_create_users.sql`) — S
@@ -61,6 +61,11 @@ Glob: **/*.test.{js,ts}
 7. Update `tests/todos.test.js` with auth context — M
 8. Add `tests/auth.test.js` — M
 
+**Non-Goals:**
+- NOT adding role-based permissions (just user-level auth for now)
+- NOT migrating existing anonymous todos to users
+- NOT implementing OAuth/social login
+
 **DO NOT TOUCH:**
 - `src/routes/health.js` — health check should remain unauthenticated
 - Todo CRUD logic — only add user scoping, don't change business logic
@@ -71,7 +76,7 @@ Glob: **/*.test.{js,ts}
 
 ---
 
-## Phase 4: IMPLEMENT
+## Step 4: IMPLEMENT
 
 Each task executed in order. After each:
 - Follows existing patterns (Express router style, migration naming, Jest patterns)
@@ -80,7 +85,7 @@ Each task executed in order. After each:
 
 ---
 
-## Phase 5: VERIFY
+## Step 5: VERIFY
 
 - [x] All 20 original todo tests pass (with auth context added)
 - [x] 15 new auth tests pass
@@ -88,3 +93,10 @@ Each task executed in order. After each:
 - [x] Todo CRUD logic unchanged (only user scoping added)
 - [x] Migrations apply cleanly
 - [x] README updated with auth instructions
+
+---
+
+## Step 6: LEARN
+
+- **Surprise:** Existing tests all assumed no auth context — took longer to update than expected.
+- **Would-do-differently:** Estimate test update effort in scope.

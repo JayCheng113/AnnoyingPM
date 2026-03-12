@@ -89,3 +89,13 @@ The bidirectional arrow between IMPLEMENT and SCOPE handles scope discovery duri
 - **test-driven-development**: Iron Law pattern, Red Flags section, "no exceptions" enforcement
 - **verification-before-completion**: final verification gate, evidence-before-assertions principle
 - **writing-plans**: task decomposition, dependency ordering, file-level specificity
+
+## v3 Improvements: Community Best Practices
+
+Research into community patterns and academic findings shaped the v3 redesign. Sources and what we adopted:
+
+1. **Sionic AI Skill Registry** (sionic-ai/sionic-research-skills) — Their /advise + /retrospective pattern for ML experiment knowledge. We adopted: LEARN step, Failed Attempts documentation.
+2. **Forced-eval activation pattern** — Research shows passive Red Flags have 20% activation rate; forced self-check questions reach 84-100%. We adopted: Pre-Implementation Self-Check replacing passive Red Flags table.
+3. **AGENTS.md standard** (agentsmd/agents.md) — Non-Goals pattern from 2500+ repos analysis by GitHub. We adopted: Non-Goals in SCOPE step.
+4. **Spec-driven development** (Addy Osmani, GitHub spec-kit) — Spec as living document, update spec not workaround. We adopted: Mid-stream pivots re-scope rather than tack on.
+5. **awesome-cursorrules** — Three-tier boundaries (Always/Ask/Never). We adopted: simplified boundary model in templates.

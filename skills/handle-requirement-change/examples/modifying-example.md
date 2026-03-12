@@ -22,7 +22,7 @@ An e-commerce API returns product lists as flat arrays. The PM requests: "Change
 
 ---
 
-## Phase 1: CLASSIFY
+## Step 1: CLASSIFY
 
 **Change Type:** MODIFYING
 **User's words:** "Change the product list endpoint to return paginated responses with metadata."
@@ -32,7 +32,7 @@ An e-commerce API returns product lists as flat arrays. The PM requests: "Change
 
 ---
 
-## Phase 2: SURVEY
+## Step 2: SURVEY
 
 **Investigation:**
 
@@ -69,7 +69,7 @@ Grep: "products\." in frontend/src/**/*.{ts,tsx}
 
 ---
 
-## Phase 3: SCOPE
+## Step 3: SCOPE
 
 **Tasks:**
 1. Add pagination helper to `src/utils/pagination.js` — S
@@ -79,6 +79,11 @@ Grep: "products\." in frontend/src/**/*.{ts,tsx}
 5. Update `frontend/src/components/ProductGrid.tsx` — use `pagination.total` for count, add pagination controls — M
 6. Update `tests/products.test.js` — all 12 tests need new response format — M
 7. Update `tests/integration/product-flow.test.js` — 3 tests need update — S
+
+**Non-Goals:**
+- NOT paginating other endpoints (orders, users)
+- NOT changing product detail endpoint format
+- NOT adding caching layer
 
 **DO NOT TOUCH:**
 - `?category=X` filter logic (just pass through to paginated query)
@@ -94,7 +99,7 @@ Grep: "products\." in frontend/src/**/*.{ts,tsx}
 
 ---
 
-## Phase 4: IMPLEMENT
+## Step 4: IMPLEMENT
 
 Key decisions during implementation:
 - Task 2 first: backend pagination logic (testable independently)
@@ -111,7 +116,7 @@ At each checkpoint:
 
 ---
 
-## Phase 5: VERIFY
+## Step 5: VERIFY
 
 - [x] 12 updated API tests pass with new response format
 - [x] 3 updated E2E tests pass
@@ -121,3 +126,11 @@ At each checkpoint:
 - [x] Product detail endpoint returns same format as before (not paginated)
 - [x] Frontend renders correctly with pagination controls
 - [x] `pagination.total` matches actual product count
+
+---
+
+## Step 6: LEARN
+
+- **Surprise:** Frontend used `.length` for count display — not in any docs.
+- **Failed attempt:** Tried updating backend without frontend simultaneously, broke the app.
+- **Would-do-differently:** Always check ALL consumers before planning.

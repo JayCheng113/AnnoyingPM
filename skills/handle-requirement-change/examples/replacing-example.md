@@ -6,7 +6,7 @@ A Node.js app uses raw SQL queries throughout route handlers. The PM requests: "
 
 ---
 
-## Phase 1: CLASSIFY
+## Step 1: CLASSIFY
 
 **Change Type:** REPLACING
 **User's words:** "Rewrite the data layer to use Prisma ORM. We're tired of SQL injection risks and manual migrations."
@@ -16,7 +16,7 @@ A Node.js app uses raw SQL queries throughout route handlers. The PM requests: "
 
 ---
 
-## Phase 2: SURVEY
+## Step 2: SURVEY
 
 **Investigation:**
 
@@ -64,7 +64,7 @@ Grep: "BEGIN\|COMMIT\|ROLLBACK\|transaction" in **/*.{js,ts}
 
 ---
 
-## Phase 3: SCOPE
+## Step 3: SCOPE
 
 **Tasks (ordered by dependency):**
 1. Initialize Prisma, create schema from existing tables — M
@@ -79,6 +79,11 @@ Grep: "BEGIN\|COMMIT\|ROLLBACK\|transaction" in **/*.{js,ts}
 10. Update all test files to use Prisma test utilities — L
 11. Remove old SQL migration files after verifying Prisma migrations work — S
 12. Update session cleanup cron to use Prisma — S
+
+**Non-Goals:**
+- NOT changing API response formats
+- NOT refactoring route handlers
+- NOT adding new database features beyond current functionality
 
 **DO NOT TOUCH:**
 - Route handlers (they call services, services call DB — only services change)
@@ -102,7 +107,7 @@ Grep: "BEGIN\|COMMIT\|ROLLBACK\|transaction" in **/*.{js,ts}
 
 ---
 
-## Phase 4: IMPLEMENT
+## Step 4: IMPLEMENT
 
 **Key rule: old code stays until new code is verified.**
 
@@ -122,7 +127,7 @@ For each service (tasks 4-9):
 
 ---
 
-## Phase 5: VERIFY
+## Step 5: VERIFY
 
 - [x] All 180 test cases pass (updated for Prisma)
 - [x] Transaction atomicity: order processing rolls back correctly on failure
@@ -136,3 +141,11 @@ For each service (tasks 4-9):
 - [x] No API response format changed (integration tests confirm)
 - [x] Old SQL files removed
 - [x] Prisma migrations generate identical schema to old SQL migrations
+
+---
+
+## Step 6: LEARN
+
+- **Surprise:** Case-insensitive email lookup was not in any spec or test — discovered only by reading raw SQL.
+- **Failed attempt:** Tried migrating all services at once, couldn't isolate which service broke.
+- **Would-do-differently:** Always migrate one service at a time with verification between.
